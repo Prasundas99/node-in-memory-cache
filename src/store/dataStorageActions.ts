@@ -1,5 +1,6 @@
 import { saveToDisk } from "utils/saveToDisk";
 import { store } from "./store";
+import { ActionTypes } from "./ActionTypes";
 
 export const dataStorageActions = (command: string[], socket: import("net").Socket) => {
     const handleSet = () => {
@@ -15,7 +16,7 @@ export const dataStorageActions = (command: string[], socket: import("net").Sock
         socket.write(value ? `${value}\n` : 'nil\n');
     };
 
-    const handleLPush = () => {
+    const handleListPush = () => {
         const [, key, value] = command;
         store.lists[key] = store.lists[key] || [];
         store.lists[key].unshift(value);
@@ -31,7 +32,7 @@ export const dataStorageActions = (command: string[], socket: import("net").Sock
         socket.write('OK\n');
     };
 
-    const handleLPop = () => {
+    const handleListPop = () => {
         const [, key] = command;
         const list = store.lists[key];
         const value = list && list.length > 0 ? list.shift() : 'nil';
@@ -47,7 +48,7 @@ export const dataStorageActions = (command: string[], socket: import("net").Sock
         saveToDisk();
     };
 
-    const handleSAdd = () => {
+    const handleSetAdd = () => {
         const [, key, value] = command;
         store.sets[key] = store.sets[key] || new Set();
         store.sets[key].add(value);
@@ -103,23 +104,27 @@ export const dataStorageActions = (command: string[], socket: import("net").Sock
         const response = hash ? Object.entries(hash).flat().join(' ') : 'nil';
         socket.write(`${response}\n`);
     };
-    
-    const actions = {
-        SET: handleSet,
-        GET: handleGet,
-        LPUSH: handleLPush,
-        RPUSH: handleRPush,
-        LPOP: handleLPop,
-        RPOP: handleRPop,
-        SADD: handleSAdd,
-        SREM: handleSRem,
-        SMEMBERS: handleSMembers,
-        HSET: handleHSet,
-        HGET: handleHGet,
-        HDEL: handleHDel,
-        HGETALL: handleHGetAll,
+
+    const handlePing = () => {
+        socket.write('PONG\n');
     };
     
-
-    return {actions}
+    const actions = {
+        [ActionTypes.SET]: handleSet,
+        [ActionTypes.GET]: handleGet,
+        [ActionTypes.LPUSH]: handleListPush,
+        [ActionTypes.RPUSH]: handleRPush,
+        [ActionTypes.LPOP]: handleListPop,
+        [ActionTypes.RPOP]: handleRPop,
+        [ActionTypes.SADD]: handleSetAdd,
+        [ActionTypes.SREM]: handleSRem,
+        [ActionTypes.SMEMBERS]: handleSMembers,
+        [ActionTypes.HSET]: handleHSet,
+        [ActionTypes.HGET]: handleHGet,
+        [ActionTypes.HDEL]: handleHDel,
+        [ActionTypes.HGETALL]: handleHGetAll,
+        [ActionTypes.PING]: handlePing
+    };
+    
+    return { actions };
 };

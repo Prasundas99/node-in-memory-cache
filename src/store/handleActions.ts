@@ -1,9 +1,10 @@
+import { ActionTypes } from "./ActionTypes";
 import { dataStorageActions } from "./dataStorageActions";
 
-export const handleActions = (action: string, command: string[], socket: import("net").Socket) => {
+export const handleActions = (action: ActionTypes, command: string[], socket: import("net").Socket) => {
     const { actions } = dataStorageActions(command, socket);
 
-    const handler = actions[action as keyof typeof actions]; 
+    const handler = actions[action as keyof typeof actions];
 
     if (handler) {
         handler();
