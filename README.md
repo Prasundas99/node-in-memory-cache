@@ -1,7 +1,9 @@
 # js-cache
+
 js-cache is a lightweight Node.js package that provides a Redis-like caching system, offering persistent key-value storage with optional expiration times. It simplifies the management of strings, lists, sets, and hashes, all stored persistently on disk.
 
 # Features
+
 - String Operations: Set and retrieve string values with optional expiration times.
 - List Operations: Push and pop elements from lists at the front or back.
 - Set Operations: Add, remove, and list members of sets.
@@ -10,6 +12,7 @@ js-cache is a lightweight Node.js package that provides a Redis-like caching sys
 - Expiration: Supports setting expiration times for keys.
 
 ## Installation
+
 Install via npm:
 
 ```
@@ -19,7 +22,9 @@ npm install js-cache
 ## Usage
 
 ### String Operations
+
 #### SET_STRING
+
 Sets a string value with an optional expiration time.
 
 ```
