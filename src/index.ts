@@ -12,5 +12,4 @@ const actions = Object.keys(ActionTypes).reduce((acc, key) => {
     return acc;
 }, {} as Record<string, (...args: string[]) => string>);
 
-
 export { actions as default, ActionTypes };

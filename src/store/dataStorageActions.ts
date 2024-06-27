@@ -4,81 +4,131 @@ import { ActionTypes } from './ActionTypes';
 
 type ActionHandler = (command: string[]) => string;
 
+const isExpired = (expiresAt: number | null) => {
+    return expiresAt !== null && Date.now() > expiresAt;
+};
+
+const setWithExpiry = (value: any, ttl: number | null) => {
+    const expiresAt = ttl ? Date.now() + ttl * 1000 : null;
+    return { value, expiresAt };
+};
+
 export const actionHandlers: Record<ActionTypes, ActionHandler> = {
-    [ActionTypes.SET]: ([, key, value]: string[]) => {
-        store.strings[key] = value;
+    [ActionTypes.SET_STRING]: ([, key, value, ttl]: string[]) => {
+        store.strings[key] = setWithExpiry(value, ttl ? parseInt(ttl) : null);
         saveToDisk();
         return 'OK';
     },
-    [ActionTypes.GET]: ([, key]: string[]) => {
-        const value = store.strings[key];
-        return value ? `${value}` : 'nil';
+    [ActionTypes.GET_STRING]: ([, key]: string[]) => {
+        const item = store.strings[key];
+        if (item && !isExpired(item.expiresAt)) {
+            return `${item.value}`;
+        } else {
+            return 'nil';
+        }
     },
-    [ActionTypes.LPUSH]: ([, key, value]: string[]) => {
-        store.lists[key] = store.lists[key] || [];
-        store.lists[key].unshift(value);
+    [ActionTypes.LIST_PUSH_FRONT]: ([, key, value, ttl]: string[]) => {
+        const item = store.lists[key] || { value: [], expiresAt: null };
+        if (isExpired(item.expiresAt)) {
+            item.value = [];
+        }
+        item.value.unshift(value);
+        item.expiresAt = ttl ? Date.now() + parseInt(ttl) * 1000 : item.expiresAt;
+        store.lists[key] = item;
         saveToDisk();
         return 'OK';
     },
-    [ActionTypes.RPUSH]: ([, key, value]: string[]) => {
-        store.lists[key] = store.lists[key] || [];
-        store.lists[key].push(value);
+    [ActionTypes.LIST_PUSH_BACK]: ([, key, value, ttl]: string[]) => {
+        const item = store.lists[key] || { value: [], expiresAt: null };
+        if (isExpired(item.expiresAt)) {
+            item.value = [];
+        }
+        item.value.push(value);
+        item.expiresAt = ttl ? Date.now() + parseInt(ttl) * 1000 : item.expiresAt;
+        store.lists[key] = item;
         saveToDisk();
         return 'OK';
     },
-    [ActionTypes.LPOP]: ([, key]: string[]) => {
-        const list = store.lists[key];
-        const value = list && list.length > 0 ? list.shift() : 'nil';
-        saveToDisk();
-        return `${value}`;
+    [ActionTypes.LIST_POP_FRONT]: ([, key]: string[]) => {
+        const item = store.lists[key];
+        if (item && !isExpired(item.expiresAt)) {
+            const value = item.value.length > 0 ? item.value.shift() : 'nil';
+            saveToDisk();
+            return `${value}`;
+        } else {
+            return 'nil';
+        }
     },
-    [ActionTypes.RPOP]: ([, key]: string[]) => {
-        const list = store.lists[key];
-        const value = list && list.length > 0 ? list.pop() : 'nil';
-        saveToDisk();
-        return `${value}`;
+    [ActionTypes.LIST_POP_BACK]: ([, key]: string[]) => {
+        const item = store.lists[key];
+        if (item && !isExpired(item.expiresAt)) {
+            const value = item.value.length > 0 ? item.value.pop() : 'nil';
+            saveToDisk();
+            return `${value}`;
+        } else {
+            return 'nil';
+        }
     },
-    [ActionTypes.SADD]: ([, key, value]: string[]) => {
-        store.sets[key] = store.sets[key] || new Set();
-        store.sets[key].add(value);
+    [ActionTypes.SET_ADD]: ([, key, value, ttl]: string[]) => {
+        const item = store.sets[key] || { value: new Set(), expiresAt: null };
+        if (isExpired(item.expiresAt)) {
+            item.value = new Set();
+        }
+        item.value.add(value);
+        item.expiresAt = ttl ? Date.now() + parseInt(ttl) * 1000 : item.expiresAt;
+        store.sets[key] = item;
         saveToDisk();
         return 'OK';
     },
-    [ActionTypes.SREM]: ([, key, value]: string[]) => {
-        const set = store.sets[key];
-        if (set) {
-            set.delete(value);
+    [ActionTypes.SET_REMOVE]: ([, key, value]: string[]) => {
+        const item = store.sets[key];
+        if (item && !isExpired(item.expiresAt)) {
+            item.value.delete(value);
             saveToDisk();
         }
         return 'OK';
     },
-    [ActionTypes.SMEMBERS]: ([, key]: string[]) => {
-        const set = store.sets[key];
-        const members = set ? Array.from(set).join(' ') : 'nil';
-        return `${members}`;
+    [ActionTypes.SET_MEMBERS]: ([, key]: string[]) => {
+        const item = store.sets[key];
+        if (item && !isExpired(item.expiresAt)) {
+            return Array.from(item.value).join(' ');
+        } else {
+            return 'nil';
+        }
     },
-    [ActionTypes.HSET]: ([, key, field, value]: string[]) => {
-        store.hashes[key] = store.hashes[key] || {};
-        store.hashes[key][field] = value;
+    [ActionTypes.HASH_SET_FIELD]: ([, key, field, value, ttl]: string[]) => {
+        const item = store.hashes[key] || { value: {}, expiresAt: null };
+        if (isExpired(item.expiresAt)) {
+            item.value = {};
+        }
+        item.value[field] = value;
+        item.expiresAt = ttl ? Date.now() + parseInt(ttl) * 1000 : item.expiresAt;
+        store.hashes[key] = item;
         saveToDisk();
         return 'OK';
     },
-    [ActionTypes.HGET]: ([, key, field]: string[]) => {
-        const hash = store.hashes[key];
-        const value = hash && hash[field] ? hash[field] : 'nil';
-        return `${value}`;
+    [ActionTypes.HASH_GET_FIELD]: ([, key, field]: string[]) => {
+        const item = store.hashes[key];
+        if (item && !isExpired(item.expiresAt)) {
+            return item.value[field] ? `${item.value[field]}` : 'nil';
+        } else {
+            return 'nil';
+        }
     },
-    [ActionTypes.HDEL]: ([, key, field]: string[]) => {
-        const hash = store.hashes[key];
-        if (hash && hash[field]) {
-            delete hash[field];
+    [ActionTypes.HASH_DELETE_FIELD]: ([, key, field]: string[]) => {
+        const item = store.hashes[key];
+        if (item && !isExpired(item.expiresAt)) {
+            delete item.value[field];
             saveToDisk();
         }
         return 'OK';
     },
-    [ActionTypes.HGETALL]: ([, key]: string[]) => {
-        const hash = store.hashes[key];
-        const response = hash ? Object.entries(hash).flat().join(' ') : 'nil';
-        return `${response}`;
+    [ActionTypes.HASH_GET_ALL]: ([, key]: string[]) => {
+        const item = store.hashes[key];
+        if (item && !isExpired(item.expiresAt)) {
+            return Object.entries(item.value).flat().join(' ');
+        } else {
+            return 'nil';
+        }
     }
 };
