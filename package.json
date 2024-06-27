@@ -1,0 +1,24 @@
+{
+  "name": "myredis",
+  "version": "1.0.0",
+  "description": "a nodejs implementations on how redis work",
+  "main": "index.js",
+
+  "scripts": {
+    "start": "npm run build && node dist/index.js",
+    "dev": "nodemon",
+    "build": "tsc",
+    "postinstall": "npm run build"
+  },
+  
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5.2",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "net": "^1.0.2"
+  }
+}
