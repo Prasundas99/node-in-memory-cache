@@ -1,24 +1,30 @@
 {
-  "name": "myredis",
+  "name": "js-cache",
   "version": "1.0.0",
   "description": "a nodejs implementations on how redis work",
   "main": "dist/index.js",
-
   "scripts": {
     "start": "npm run build && node dist/index.js",
     "dev": "nodemon",
     "build": "tsc",
     "postinstall": "npm run build"
   },
-  
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/myredis.git"
+  },
+  "keywords": [
+    "redis",
+    "nodejs",
+    "key-value store",
+    "js-cache",
+    "cache"
+  ],
+  "author": "Prasun Das",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.14.9",
-    "typescript": "^5.5.2",
-    "ts-node": "^10.9.1"
-  },
-  "dependencies": {
-    "net": "^1.0.2"
+    "ts-node": "^10.9.1",
+    "typescript": "^5.5.2"
   }
 }
