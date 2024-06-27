@@ -1,5 +1,5 @@
 import * as net from 'net';
-import { dataStorageActions } from 'store/actions';
+import { handleActions } from 'store/handleActions';
 import { loadFromDisk } from 'utils/loadFromDisk';
 
 
@@ -12,7 +12,7 @@ const server = net.createServer((socket: net.Socket) => {
     const command = data.toString().trim().split(' ');
     const action = command[0].toUpperCase();
 
-    dataStorageActions(action, command, socket);
+    handleActions(action, command, socket);
 
   });
 

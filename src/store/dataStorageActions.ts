@@ -1,7 +1,7 @@
 import { saveToDisk } from "utils/saveToDisk";
 import { store } from "./store";
 
-export const dataStorageActions = (action: string, command: string[], socket: import("net").Socket) => {
+export const dataStorageActions = (command: string[], socket: import("net").Socket) => {
     const handleSet = () => {
         const [, key, value] = command;
         store.strings[key] = value;
@@ -103,4 +103,23 @@ export const dataStorageActions = (action: string, command: string[], socket: im
         const response = hash ? Object.entries(hash).flat().join(' ') : 'nil';
         socket.write(`${response}\n`);
     };
+    
+    const actions = {
+        SET: handleSet,
+        GET: handleGet,
+        LPUSH: handleLPush,
+        RPUSH: handleRPush,
+        LPOP: handleLPop,
+        RPOP: handleRPop,
+        SADD: handleSAdd,
+        SREM: handleSRem,
+        SMEMBERS: handleSMembers,
+        HSET: handleHSet,
+        HGET: handleHGet,
+        HDEL: handleHDel,
+        HGETALL: handleHGetAll,
+    };
+    
+
+    return {actions}
 };
