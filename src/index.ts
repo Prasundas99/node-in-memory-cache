@@ -1,7 +1,7 @@
 import * as net from 'net';
-import { handleActions } from 'store/handleActions';
-import { loadFromDisk } from 'utils/loadFromDisk';
-
+import { loadFromDisk } from './utils/loadFromDisk';
+import { handleActions } from './store/handleActions';
+import { ActionTypes } from './store/ActionTypes';
 
 loadFromDisk();
 
@@ -10,7 +10,7 @@ const server = net.createServer((socket: net.Socket) => {
 
   socket.on('data', (data) => {
     const command = data.toString().trim().split(' ');
-    const action = command[0].toUpperCase();
+    const action  = command[0].toUpperCase() as ActionTypes;
 
     handleActions(action, command, socket);
 

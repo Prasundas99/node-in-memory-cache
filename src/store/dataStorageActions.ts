@@ -1,6 +1,7 @@
-import { saveToDisk } from "utils/saveToDisk";
+
 import { store } from "./store";
 import { ActionTypes } from "./ActionTypes";
+import { saveToDisk } from "../utils/saveToDisk";
 
 export const dataStorageActions = (command: string[], socket: import("net").Socket) => {
     const handleSet = () => {

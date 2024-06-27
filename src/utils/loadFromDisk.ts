@@ -1,6 +1,5 @@
 import * as fs from 'fs';
-import { store } from 'store/store';
-
+import { store } from '../store/store';
 
 export const loadFromDisk = () => {
     if (fs.existsSync('dump.rdb')) {
