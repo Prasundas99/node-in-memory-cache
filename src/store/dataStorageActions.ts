@@ -1,131 +1,84 @@
+import { store } from './store';
+import { saveToDisk } from '../utils/saveToDisk';
+import { ActionTypes } from './ActionTypes';
 
-import { store } from "./store";
-import { ActionTypes } from "./ActionTypes";
-import { saveToDisk } from "../utils/saveToDisk";
+type ActionHandler = (command: string[]) => string;
 
-export const dataStorageActions = (command: string[], socket: import("net").Socket) => {
-    const handleSet = () => {
-        const [, key, value] = command;
+export const actionHandlers: Record<ActionTypes, ActionHandler> = {
+    [ActionTypes.SET]: ([, key, value]: string[]) => {
         store.strings[key] = value;
         saveToDisk();
-        socket.write('OK\n');
-    };
-
-    const handleGet = () => {
-        const [, key] = command;
+        return 'OK';
+    },
+    [ActionTypes.GET]: ([, key]: string[]) => {
         const value = store.strings[key];
-        socket.write(value ? `${value}\n` : 'nil\n');
-    };
-
-    const handleListPush = () => {
-        const [, key, value] = command;
+        return value ? `${value}` : 'nil';
+    },
+    [ActionTypes.LPUSH]: ([, key, value]: string[]) => {
         store.lists[key] = store.lists[key] || [];
         store.lists[key].unshift(value);
         saveToDisk();
-        socket.write('OK\n');
-    };
-
-    const handleRPush = () => {
-        const [, key, value] = command;
+        return 'OK';
+    },
+    [ActionTypes.RPUSH]: ([, key, value]: string[]) => {
         store.lists[key] = store.lists[key] || [];
         store.lists[key].push(value);
         saveToDisk();
-        socket.write('OK\n');
-    };
-
-    const handleListPop = () => {
-        const [, key] = command;
+        return 'OK';
+    },
+    [ActionTypes.LPOP]: ([, key]: string[]) => {
         const list = store.lists[key];
         const value = list && list.length > 0 ? list.shift() : 'nil';
-        socket.write(`${value}\n`);
         saveToDisk();
-    };
-
-    const handleRPop = () => {
-        const [, key] = command;
+        return `${value}`;
+    },
+    [ActionTypes.RPOP]: ([, key]: string[]) => {
         const list = store.lists[key];
         const value = list && list.length > 0 ? list.pop() : 'nil';
-        socket.write(`${value}\n`);
         saveToDisk();
-    };
-
-    const handleSetAdd = () => {
-        const [, key, value] = command;
+        return `${value}`;
+    },
+    [ActionTypes.SADD]: ([, key, value]: string[]) => {
         store.sets[key] = store.sets[key] || new Set();
         store.sets[key].add(value);
         saveToDisk();
-        socket.write('OK\n');
-    };
-
-    const handleSRem = () => {
-        const [, key, value] = command;
+        return 'OK';
+    },
+    [ActionTypes.SREM]: ([, key, value]: string[]) => {
         const set = store.sets[key];
         if (set) {
             set.delete(value);
             saveToDisk();
         }
-        socket.write('OK\n');
-    };
-
-    const handleSMembers = () => {
-        const [, key] = command;
+        return 'OK';
+    },
+    [ActionTypes.SMEMBERS]: ([, key]: string[]) => {
         const set = store.sets[key];
         const members = set ? Array.from(set).join(' ') : 'nil';
-        socket.write(`${members}\n`);
-    };
-
-    const handleHSet = () => {
-        const [, key, field, value] = command;
+        return `${members}`;
+    },
+    [ActionTypes.HSET]: ([, key, field, value]: string[]) => {
         store.hashes[key] = store.hashes[key] || {};
         store.hashes[key][field] = value;
         saveToDisk();
-        socket.write('OK\n');
-    };
-
-    const handleHGet = () => {
-        const [, key, field] = command;
+        return 'OK';
+    },
+    [ActionTypes.HGET]: ([, key, field]: string[]) => {
         const hash = store.hashes[key];
         const value = hash && hash[field] ? hash[field] : 'nil';
-        socket.write(`${value}\n`);
-    };
-
-    const handleHDel = () => {
-        const [, key, field] = command;
+        return `${value}`;
+    },
+    [ActionTypes.HDEL]: ([, key, field]: string[]) => {
         const hash = store.hashes[key];
         if (hash && hash[field]) {
             delete hash[field];
             saveToDisk();
         }
-        socket.write('OK\n');
-    };
-
-    const handleHGetAll = () => {
-        const [, key] = command;
+        return 'OK';
+    },
+    [ActionTypes.HGETALL]: ([, key]: string[]) => {
         const hash = store.hashes[key];
         const response = hash ? Object.entries(hash).flat().join(' ') : 'nil';
-        socket.write(`${response}\n`);
-    };
-
-    const handlePing = () => {
-        socket.write('PONG\n');
-    };
-    
-    const actions = {
-        [ActionTypes.SET]: handleSet,
-        [ActionTypes.GET]: handleGet,
-        [ActionTypes.LPUSH]: handleListPush,
-        [ActionTypes.RPUSH]: handleRPush,
-        [ActionTypes.LPOP]: handleListPop,
-        [ActionTypes.RPOP]: handleRPop,
-        [ActionTypes.SADD]: handleSetAdd,
-        [ActionTypes.SREM]: handleSRem,
-        [ActionTypes.SMEMBERS]: handleSMembers,
-        [ActionTypes.HSET]: handleHSet,
-        [ActionTypes.HGET]: handleHGet,
-        [ActionTypes.HDEL]: handleHDel,
-        [ActionTypes.HGETALL]: handleHGetAll,
-        [ActionTypes.PING]: handlePing
-    };
-    
-    return { actions };
+        return `${response}`;
+    }
 };

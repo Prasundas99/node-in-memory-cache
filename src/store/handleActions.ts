@@ -1,14 +1,12 @@
-import { ActionTypes } from "./ActionTypes";
-import { dataStorageActions } from "./dataStorageActions";
+import { actionHandlers } from './dataStorageActions';
+import { ActionTypes } from './ActionTypes';
 
-export const handleActions = (action: ActionTypes, command: string[], socket: import("net").Socket) => {
-    const { actions } = dataStorageActions(command, socket);
-
-    const handler = actions[action as keyof typeof actions];
+export const handleAction = (action: ActionTypes, command: string[]) => {
+    const handler = actionHandlers[action];
 
     if (handler) {
-        handler();
+        return handler(command);
     } else {
-        socket.write('ERROR: Unknown command\n');
+        throw new Error('ERROR: Unknown command');
     }
 };

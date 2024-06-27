@@ -1,26 +1,16 @@
-import * as net from 'net';
 import { loadFromDisk } from './utils/loadFromDisk';
-import { handleActions } from './store/handleActions';
+import { handleAction } from './store/handleActions';
 import { ActionTypes } from './store/ActionTypes';
 
 loadFromDisk();
 
-const server = net.createServer((socket: net.Socket) => {
-  console.log('Client connected');
+const createActionHandler = (action: ActionTypes) => (...args: string[]) => handleAction(action, [action, ...args]);
 
-  socket.on('data', (data) => {
-    const command = data.toString().trim().split(' ');
-    const action  = command[0].toUpperCase() as ActionTypes;
+const actions = Object.keys(ActionTypes).reduce((acc, key) => {
+    const action = ActionTypes[key as keyof typeof ActionTypes];
+    acc[key.toLowerCase()] = createActionHandler(action);
+    return acc;
+}, {} as Record<string, (...args: string[]) => string>);
 
-    handleActions(action, command, socket);
 
-  });
-
-  socket.on('end', () => {
-    console.log('Client disconnected');
-  });
-});
-
-server.listen(6379, () => {
-  console.log('Server listening on port 6379');
-});
+export { actions as default, ActionTypes };

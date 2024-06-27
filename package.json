@@ -2,7 +2,7 @@
   "name": "myredis",
   "version": "1.0.0",
   "description": "a nodejs implementations on how redis work",
-  "main": "index.js",
+  "main": "dist/index.js",
 
   "scripts": {
     "start": "npm run build && node dist/index.js",

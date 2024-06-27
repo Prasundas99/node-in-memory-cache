@@ -11,6 +11,5 @@ export enum ActionTypes {
     HSET = "HSET",
     HGET = "HGET",
     HDEL = "HDEL",
-    HGETALL = "HGETALL",
-    PING = "PING",
+    HGETALL = "HGETALL"
 }
