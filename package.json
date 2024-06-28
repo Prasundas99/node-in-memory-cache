@@ -1,6 +1,6 @@
 {
-  "name": "js-cache",
-  "version": "1.0.0",
+  "name": "node-in-memory-cache",
+  "version": "1.0.5",
   "description": "a nodejs implementations on how redis work",
   "main": "dist/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Prasundas99/js-cache.git"
+    "url": "https://github.com/Prasundas99/node-in-memory-cache"
   },
   "keywords": [
     "redis",

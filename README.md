@@ -1,6 +1,6 @@
-# js-cache
+# node-in-memory-cache
 
-js-cache is a lightweight Node.js package that provides a Redis-like caching system, offering persistent key-value storage with optional expiration times. It simplifies the management of strings, lists, sets, and hashes, all stored persistently on disk.
+node in memory cache is a lightweight Node.js package that provides a Redis-like caching system, offering persistent key-value storage with optional expiration times. It simplifies the management of strings, lists, sets, and hashes, all stored persistently on disk.
 
 # Features
 
@@ -15,11 +15,16 @@ js-cache is a lightweight Node.js package that provides a Redis-like caching sys
 
 Install via npm:
 
+
 ```
-npm install js-cache
+npm install node-in-memory-cache
 ```
 
 ## Usage
+
+```
+import {nodejsCache} from 'node-in-memory-cache'
+```
 
 ### String Operations
 
@@ -28,14 +33,14 @@ npm install js-cache
 Sets a string value with an optional expiration time.
 
 ```
-jsCache.set_string('key1', 'value1', '60'); // Set 'key1' with value 'value1' and expiration time of 60 seconds
+nodejsCache.set_string('key1', 'value1', '60'); // Set 'key1' with value 'value1' and expiration time of 60 seconds
 ```
 
 #### GET_STRING
 Retrieves a string value based on the key.
 
 ```
-const value = jsCache.get_string('key1'); // Retrieve value of 'key1'
+const value = nodejsCache.get_string('key1'); // Retrieve value of 'key1'
 console.log(value); // Outputs: 'value1' or 'nil' if expired or not found
 ```
 
@@ -45,21 +50,21 @@ console.log(value); // Outputs: 'value1' or 'nil' if expired or not found
 Pushes an element to the front of a list.
 
 ```
-jsCache.list_push_front('myList', 'value2'); // Push 'value2' to the front of 'myList'
+nodejsCache.list_push_front('myList', 'value2'); // Push 'value2' to the front of 'myList'
 ```
 
 #### LIST_PUSH_BACK
 Pushes an element to the back of a list.
 
 ```
-jsCache.list_push_back('myList', 'value3'); // Push 'value3' to the back of 'myList'
+nodejsCache.list_push_back('myList', 'value3'); // Push 'value3' to the back of 'myList'
 ```
 
 #### LIST_POP_FRONT
 Pops an element from the front of a list.
 
 ```
-const poppedValue = jsCache.list_pop_front('myList'); // Pop from the front of 'myList'
+const poppedValue = nodejsCache.list_pop_front('myList'); // Pop from the front of 'myList'
 console.log(poppedValue); // Outputs: 'value2' or 'nil' if list is empty
 ```
 
@@ -67,7 +72,7 @@ console.log(poppedValue); // Outputs: 'value2' or 'nil' if list is empty
 Pops an element from the back of a list.
 
 ```
-const poppedValue = jsCache.list_pop_back('myList'); // Pop from the back of 'myList'
+const poppedValue = nodejsCache.list_pop_back('myList'); // Pop from the back of 'myList'
 console.log(poppedValue); // Outputs: 'value3' or 'nil' if list is empty
 ```
 
@@ -77,21 +82,21 @@ console.log(poppedValue); // Outputs: 'value3' or 'nil' if list is empty
 Adds an element to a set.
 
 ```
-jsCache.set_add('mySet', 'value4'); // Add 'value4' to 'mySet'
+nodejsCache.set_add('mySet', 'value4'); // Add 'value4' to 'mySet'
 ```
 
 #### SET_REMOVE
 Removes an element from a set.
 
 ```
-jsCache.set_remove('mySet', 'value4'); // Remove 'value4' from 'mySet'
+nodejsCache.set_remove('mySet', 'value4'); // Remove 'value4' from 'mySet'
 ```
 
 #### SET_MEMBERS
 Retrieves all members of a set.
 
 ```
-const setMembers = jsCache.set_members('mySet'); // Retrieve members of 'mySet'
+const setMembers = nodejsCache.set_members('mySet'); // Retrieve members of 'mySet'
 console.log(setMembers);
 ```
 
@@ -101,14 +106,14 @@ console.log(setMembers);
 Sets a field within a hash.
 
 ```
-jsCache.hash_set_field('myHash', 'field1', 'value5'); // Set 'field1' with 'value5' in 'myHash'
+nodejsCache.hash_set_field('myHash', 'field1', 'value5'); // Set 'field1' with 'value5' in 'myHash'
 ```
 
 #### HASH_GET_FIELD
 Retrieves the value of a field within a hash.
 
 ```
-const hashValue = jsCache.hash_get_field('myHash', 'field1'); // Retrieve value of 'field1' in 'myHash'
+const hashValue = nodejsCache.hash_get_field('myHash', 'field1'); // Retrieve value of 'field1' in 'myHash'
 console.log(hashValue);
 ```
 
@@ -116,14 +121,14 @@ console.log(hashValue);
 Deletes a field from a hash.
 
 ```
-jsCache.hash_delete_field('myHash', 'field1'); // Delete 'field1' from 'myHash'
+nodejsCache.hash_delete_field('myHash', 'field1'); // Delete 'field1' from 'myHash'
 ```
 
 #### HASH_GET_ALL
 Retrieves all fields and values from a hash.
 
 ```
-const allFields = jsCache.hash_get_all('myHash'); // Retrieve all fields and values from 'myHash'
+const allFields = nodejsCache.hash_get_all('myHash'); // Retrieve all fields and values from 'myHash'
 console.log(allFields);
 ```
 

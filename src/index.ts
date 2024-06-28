@@ -6,7 +6,7 @@ loadFromDisk();
 
 const createActionHandler = (action: ActionTypes) => (...args: string[]) => handleAction(action, [action, ...args]);
 
-const actions = {
+const nodejsCache = {
   SET_STRING: createActionHandler(ActionTypes.SET_STRING),
   GET_STRING: createActionHandler(ActionTypes.GET_STRING),
   LIST_PUSH_FRONT: createActionHandler(ActionTypes.LIST_PUSH_FRONT),
@@ -23,4 +23,4 @@ const actions = {
 }
 
 
-export {actions};
+export {nodejsCache};

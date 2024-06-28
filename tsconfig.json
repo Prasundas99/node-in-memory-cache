@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es2019", // or "es2018", "esnext"
+    "lib": [
+      "dom",
+      "es2017"
+    ],
     "module": "CommonJS",
     "outDir": "./dist",
     "rootDir": "./src",

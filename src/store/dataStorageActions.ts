@@ -126,11 +126,12 @@ export const actionHandlers: Record<ActionTypes, ActionHandler> = {
     [ActionTypes.HASH_GET_ALL]: ([, key]: string[]) => {
         const item = store.hashes[key];
         if (item && !isExpired(item.expiresAt)) {
-            return Object.entries(item.value).flat().join(' ');
+            // return Object.entries(item.value).flat().join(' ');
+            return JSON.stringify(item.value);
         } else {
             return 'nil';
         }
-    }
+    }    
 };
 
 
